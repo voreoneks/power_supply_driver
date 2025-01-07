@@ -7,6 +7,12 @@ default:
   FAST_API_PATH: app.application:app
   LOG_LEVEL: info
   RELOADED: True
+  NUM_CHANNELS: 4
+  COMMANDS:
+    set_current_level: ":SOURce{channel_number}:CURRent {value}\n"
+    set_voltage_level: ":SOURce{channel_number}:VOLTage {value}\n"
+    channel_switch: ":OUTPut{channel_number}:STATe {value}\n"
+    channel_states: ":MEASure{channel_number}:ALL?\n"
   CORS:
     allow_origins: ['*']
     allow_methods: '*'
@@ -33,7 +39,19 @@ default:
         class: logging.StreamHandler
         formatter: default
         stream: ext://sys.stderr
+      file:
+        level: INFO
+        class: logging.handlers.RotatingFileHandler
+        formatter: default
+        filename: channel_states.log
+        maxBytes: 1024
+        backupCount: 3
     loggers:
       root:
         level: INFO
         handlers: [ console, error ]
+      file_logger:
+        level: INFO
+        handlers: [ file ]
+
+    

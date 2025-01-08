@@ -4,19 +4,20 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from app.api.routers.health_check import HealthCheckRouter
-from app.api.routers.power_supply_control import PowerSupplyControl
+from app.api.routers.power_supply_control import PowerSupplyControlRouter
 from app.config import settings
-from app.services.power_supply_service import PowerSupplyClient
 from app.container import Container
-from starlette.middleware.cors import CORSMiddleware
+from app.services.power_supply_service import PowerSupplyClient
 
 
 @asynccontextmanager
 async def _lifespan(_app: FastAPI) -> AsyncGenerator:
-    
+
     power_supply: PowerSupplyClient = Container.power_supply_client()
+    power_supply.init_connection()
     loop = asyncio.get_event_loop()
     loop.create_task(power_supply.telemetry_poll_task())
     logging.info("Инициализация startup callbacks прошла успешно")
@@ -37,7 +38,7 @@ app = FastAPI(
     lifespan=_lifespan,
 )
 app.include_router(HealthCheckRouter().api_router)
-app.include_router(PowerSupplyControl().api_router)
+app.include_router(PowerSupplyControlRouter().api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS.allow_origins,

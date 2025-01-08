@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "power-supply-driver"
-version = "0.1.0"
+version = "1.0.0"
 description = "Драйвер для работы с промышленным 4-х канальным источником питания"
 authors = ["Vladislav <v.v.b.zhuravlev@gmail.com>"]
 readme = "README.md"

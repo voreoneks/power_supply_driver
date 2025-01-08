@@ -40,7 +40,6 @@ class PowerSupplyClient:
         if healthcheck:
             logging.info("Устройство подключено и готово к работе")
 
-    @retry(wait=wait_random(min=1, max=10), reraise=True)
     def check_connection(self) -> str:
         resources = self.rm.list_resources()
         if not resources:
